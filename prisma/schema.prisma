@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model score {
+  ID        Int      @id @default(autoincrement())
+  FIRSTNAME String   @db.VarChar(64)
+  SURNAME   String   @db.VarChar(64)
+  MAIL      String   @unique(map: "MAIL") @db.VarChar(64)
+  SCORE     Int
+  TIMESTAMP DateTime @default(now()) @db.Timestamp(0)
+}
