@@ -6,7 +6,8 @@ var logger = require('morgan');
 var app = express();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient()
-
+const bcrypt = require("bcrypt");
+const SHA2 = require("sha2");
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -14,40 +15,48 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.put('/score', async (req, res) => {
   const scoreJson = req.body;
 
-  const score = await prisma.score.findUnique({
-    where: {
-      MAIL: scoreJson.mail,
-    }
-  })
+  const hash = SHA2.SHA512(getHashString(scoreJson)).toString("hex");
+  console.log(hash + " | " + scoreJson.ver);
+  const valid = hash === scoreJson.ver;
 
-  if(score) {
-    if (score.SCORE < scoreJson.score) {
-      const updateUser = await prisma.score.update({
-        where: {
-          MAIL: scoreJson.mail,
-        },
+  if (valid) {
+    const score = await prisma.score.findUnique({
+      where: {
+        MAIL: scoreJson.mail,
+      }
+    })
+
+    if(score) {
+      if (score.SCORE < scoreJson.score) {
+        const updateUser = await prisma.score.update({
+          where: {
+            MAIL: scoreJson.mail,
+          },
+          data: {
+            SCORE: parseInt(scoreJson.score),
+            TIMESTAMP: new Date()
+          },
+        })
+      }
+    } else {
+      const user = await prisma.score.create({
         data: {
+          FIRSTNAME: scoreJson.firstname,
+          SURNAME: scoreJson.surname,
+          MAIL: scoreJson.mail,
           SCORE: parseInt(scoreJson.score),
           TIMESTAMP: new Date()
         },
       })
     }
+    res.send();
   } else {
-    const user = await prisma.score.create({
-      data: {
-        FIRSTNAME: scoreJson.firstname,
-        SURNAME: scoreJson.surname,
-        MAIL: scoreJson.mail,
-        SCORE: parseInt(scoreJson.score),
-        TIMESTAMP: new Date()
-      },
-    })
+    console.log("CHEAT");
+    res.send();
   }
-  res.send();
 });
 
 // catch 404 and forward to error handler
@@ -65,5 +74,14 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+function getHashString(score) {
+  const surnameHash = score.surname.split("").reverse().join("");
+  const scoreHash = parseInt(score.score) * 1892;
+  const mailHash = score.mail.split("@")[0] + "|" + score.firstname;
+
+  console.log(surnameHash + scoreHash + mailHash);
+  return surnameHash + scoreHash + mailHash;
+}
 
 module.exports = app;
