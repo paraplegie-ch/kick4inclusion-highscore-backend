@@ -6,7 +6,6 @@ var logger = require('morgan');
 var app = express();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient()
-const bcrypt = require("bcrypt");
 const SHA2 = require("sha2");
 
 app.use(logger('dev'));
@@ -48,7 +47,8 @@ app.put('/score', async (req, res) => {
           SURNAME: scoreJson.surname,
           MAIL: scoreJson.mail,
           SCORE: parseInt(scoreJson.score),
-          TIMESTAMP: new Date()
+          TIMESTAMP: new Date(),
+          GAMETAG: scoreJson.gametag
         },
       })
     }

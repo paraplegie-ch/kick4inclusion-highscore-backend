@@ -14,4 +14,5 @@ model score {
   MAIL      String   @unique(map: "MAIL") @db.VarChar(64)
   SCORE     Int
   TIMESTAMP DateTime @default(now()) @db.Timestamp(0)
+  GAMETAG   String   @db.VarChar(50)
 }
