@@ -7,12 +7,14 @@ var app = express();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient()
 const SHA2 = require("sha2");
+const cors = require("cors");
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
 
 app.get('/score', async (req, res) => {
   const scores = await prisma.score.findMany({
