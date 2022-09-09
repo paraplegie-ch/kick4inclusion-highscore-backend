@@ -14,6 +14,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/score', async (req, res) => {
+  const scores = await prisma.score.findMany({
+    select: {
+      GAMETAG: true,
+      SCORE: true
+    },
+    orderBy: {
+      SCORE: 'desc'
+    }
+  });
+
+  res.send(scores);
+});
+
 app.put('/score', async (req, res) => {
   const scoreJson = req.body;
 
