@@ -19,7 +19,8 @@ app.use(cors());
 app.get('/score', async (req, res) => {
   const scores = await prisma.score.findMany({
     select: {
-      GAMETAG: true,
+      MAIL: true,
+      NAME: true,
       SCORE: true
     },
     orderBy: {
@@ -59,12 +60,10 @@ app.put('/score', async (req, res) => {
     } else {
       const user = await prisma.score.create({
         data: {
-          FIRSTNAME: scoreJson.firstname,
-          SURNAME: scoreJson.surname,
+          NAME: scoreJson.name,
           MAIL: scoreJson.mail,
           SCORE: parseInt(scoreJson.score),
           TIMESTAMP: new Date(),
-          GAMETAG: scoreJson.gametag
         },
       })
     }
@@ -75,26 +74,10 @@ app.put('/score', async (req, res) => {
   }
 });
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
-
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
 function getHashString(score) {
-  const surnameHash = score.surname.split("").reverse().join("");
+  const surnameHash = score.name.split("").reverse().join("");
   const scoreHash = parseInt(score.score) * 1892;
-  const mailHash = score.mail.split("@")[0] + "|" + score.firstname;
+  const mailHash = score.mail.split("@")[0] + "|" + score.name;
 
   console.log(surnameHash + scoreHash + mailHash);
   return surnameHash + scoreHash + mailHash;

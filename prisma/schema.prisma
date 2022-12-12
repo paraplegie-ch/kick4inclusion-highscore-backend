@@ -9,10 +9,8 @@ datasource db {
 
 model score {
   ID        Int      @id @default(autoincrement())
-  FIRSTNAME String   @db.VarChar(64)
-  SURNAME   String   @db.VarChar(64)
+  NAME   String   @db.VarChar(64)
   MAIL      String   @unique(map: "MAIL") @db.VarChar(64)
   SCORE     Int
   TIMESTAMP DateTime @default(now()) @db.Timestamp(0)
-  GAMETAG   String   @db.VarChar(50)
 }
