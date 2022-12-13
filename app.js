@@ -40,7 +40,7 @@ app.put('/score', async (req, res) => {
   if (valid) {
     const score = await prisma.score.findUnique({
       where: {
-        MAIL: scoreJson.mail,
+        NAME: scoreJson.name,
       }
     })
 
@@ -48,7 +48,7 @@ app.put('/score', async (req, res) => {
       if (score.SCORE < scoreJson.score) {
         const updateUser = await prisma.score.update({
           where: {
-            MAIL: scoreJson.name,
+            NAME: scoreJson.name,
           },
           data: {
             SCORE: parseInt(scoreJson.score),

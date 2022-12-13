@@ -3,13 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model score {
   ID        Int      @id @default(autoincrement())
-  NAME   String   @db.VarChar(64)
+  NAME   String    @unique(map: "MAIL") @db.VarChar(64)
   SCORE     Int
   TIMESTAMP DateTime @default(now()) @db.Timestamp(0)
 }
