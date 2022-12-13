@@ -73,6 +73,12 @@ app.put('/score', async (req, res) => {
   }
 });
 
+app.get('/dangerous-reset', async (req, res) => {
+  const scores = await prisma.score.deleteMany({})
+
+  res.send("Einträge gelöscht");
+});
+
 function getHashString(score) {
   const surnameHash = score.name.split("").reverse().join("");
   const scoreHash = parseInt(score.score) * 1892;
