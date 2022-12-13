@@ -19,7 +19,6 @@ app.use(cors());
 app.get('/score', async (req, res) => {
   const scores = await prisma.score.findMany({
     select: {
-      MAIL: true,
       NAME: true,
       SCORE: true
     },
@@ -49,7 +48,7 @@ app.put('/score', async (req, res) => {
       if (score.SCORE < scoreJson.score) {
         const updateUser = await prisma.score.update({
           where: {
-            MAIL: scoreJson.mail,
+            MAIL: scoreJson.name,
           },
           data: {
             SCORE: parseInt(scoreJson.score),
@@ -61,7 +60,7 @@ app.put('/score', async (req, res) => {
       const user = await prisma.score.create({
         data: {
           NAME: scoreJson.name,
-          MAIL: scoreJson.mail,
+          // MAIL: scoreJson.mail,
           SCORE: parseInt(scoreJson.score),
           TIMESTAMP: new Date(),
         },
@@ -77,10 +76,9 @@ app.put('/score', async (req, res) => {
 function getHashString(score) {
   const surnameHash = score.name.split("").reverse().join("");
   const scoreHash = parseInt(score.score) * 1892;
-  const mailHash = score.mail.split("@")[0] + "|" + score.name;
+  // const mailHash = score.mail.split("@")[0] + "|" + score.name;
 
-  console.log(surnameHash + scoreHash + mailHash);
-  return surnameHash + scoreHash + mailHash;
+  return surnameHash + scoreHash;
 }
 
 module.exports = app;
